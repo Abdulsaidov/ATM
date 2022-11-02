@@ -4,14 +4,14 @@ import org.atm.model.Card;
 
 import java.time.LocalDate;
 
-public class isExpired extends OperationAvailability{
+public class isExpired extends OperationAvailability {
     @Override
-    public void check(String pin, Card card) {
-        if (!card.getExpiresDate().isAfter(LocalDate.now())){
-            throw new RuntimeException("Срок действия карты истек");
+    public boolean check(String pin, Card card) {
+        if (!card.getExpiresDate().isAfter(LocalDate.now())) {
+            System.out.println("Срок действия карты истек");
+            return false;
         }
-        checkNext(pin,card);
-
+        checkNext(pin, card);
+        return true;
     }
-
 }

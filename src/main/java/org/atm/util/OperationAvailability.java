@@ -9,7 +9,7 @@ public abstract class OperationAvailability {
             next.check( pin, card);
         }
     }
-    public abstract void check(String pin, Card card);
+    public abstract boolean check(String pin, Card card);
 
     public static OperationAvailability link(OperationAvailability first, OperationAvailability... chain) {
         OperationAvailability head = first;

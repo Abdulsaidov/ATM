@@ -114,9 +114,9 @@ public class ATMService {
         }
     }
 
-    public static void operationAvailable(String pin) {
+    public static boolean operationAvailable(String pin) {
         OperationAvailability operationAvailability = OperationAvailability.link(new Pin(), new isExpired(), new CurrencyAvailable());
-        operationAvailability.check(pin, AdminService.readCard(inspectCardNumber()));
+        return operationAvailability.check(pin, AdminService.readCard(inspectCardNumber()));
     }
 
 
