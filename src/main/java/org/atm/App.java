@@ -3,7 +3,9 @@ package org.atm;
 import org.atm.service.ATMService;
 import org.atm.service.AdminService;
 
-import java.util.Scanner;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
 
 
 public class App {
@@ -23,15 +25,19 @@ public class App {
 
     public static void main(String[] args) {
 
-        Scanner scanner = new Scanner(System.in);
-        setWelcome(scanner);
+        BufferedReader scanner = new BufferedReader(new InputStreamReader(System.in));
+        try {
+            setWelcome(scanner);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
 
     }
-    private static void setWelcome(Scanner scanner) {
+    private static void setWelcome(BufferedReader scanner) throws IOException {
         System.out.println(WELCOME);
         String choose = "";
         while (!choose.equals("0")) {
-            choose = scanner.next();
+            choose = scanner.readLine();
             if (choose.equals("1")) {
                 // admins side
                 setAdmin(scanner);
@@ -43,25 +49,25 @@ public class App {
             }
         }
     }
-    private static void setAdmin(Scanner scanner) {
+    private static void setAdmin(BufferedReader scanner) throws IOException {
         System.out.println(ADMIN);
         String admin = "";
         while (!admin.equals("0")) {
-            admin = scanner.next();
+            admin = scanner.readLine();
             if (admin.equals("1")) {
                 System.out.println("Введите номер карты");
-                String cardNumber = scanner.next();
+                String cardNumber = scanner.readLine();
                 AdminService.writeCard(cardNumber);
-                System.out.println("Карта успешно добавлена \"\\n\" + \"Нажмите 0 , чтобы продолжить\"");
+                System.out.println("Карта успешно добавлена" + "\n" + "Нажмите 0 , чтобы продолжить");
             } else if (admin.equals("2")) {
                 System.out.println("Введите количество 10 рублевых купюр");
-                int tens = scanner.nextInt();
+                int tens = Integer.parseInt(scanner.readLine());
                 System.out.println("Введите количество 20 рублевых купюр");
-                int twenty = scanner.nextInt();
+                int twenty = Integer.parseInt(scanner.readLine());
                 System.out.println("Введите количество 50 рублевых купюр");
-                int fifty = scanner.nextInt();
+                int fifty = Integer.parseInt(scanner.readLine());
                 System.out.println("Введите количество 100 рублевых купюр");
-                int hundred = scanner.nextInt();
+                int hundred = Integer.parseInt(scanner.readLine());
                 ATMService.fillStorage(tens, twenty, fifty, hundred);
                 System.out.println("Деньги успешно добавлены в банкомат"+"\n" + "Нажмите 0 , чтобы продолжить");
             } else if (admin.equals("0")) {
@@ -73,20 +79,20 @@ public class App {
         }
         System.out.println("admin " + WELCOME);
     }
-    private static void setUser(Scanner scanner) {
+    private static void setUser(BufferedReader scanner) throws IOException {
         System.out.println("Введите pin code");
-        String pin = scanner.next();
+        String pin = scanner.readLine();
         ATMService.operationAvailable(pin);
         System.out.println(USER);
         String user = "";
         while (!user.equals("0")) {
-            user = scanner.next();
+            user = scanner.readLine();
             if (user.equals("1")) {
                 ATMService.getBalance();
                 System.out.println("\n" + "Нажмите 0 , чтобы продолжить");
             } else if (user.equals("2")) {
                 System.out.println("Введите сумму, которую вы хотите снять");
-                double summa = scanner.nextDouble();
+                double summa = Double.parseDouble(scanner.readLine());
                 ATMService.getMoney(summa);
                 System.out.println("\n" + "Нажмите 0 , чтобы продолжить");
             } else if (user.equals("0")) {

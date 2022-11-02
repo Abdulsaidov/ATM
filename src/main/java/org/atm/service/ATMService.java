@@ -16,10 +16,11 @@ public class ATMService {
     private static final String currency = "RUB";
 
     static {
-        try (ObjectInputStream ois = new ObjectInputStream(new FileInputStream("storage.dat"))) {
+        try (ObjectInputStream ois = new ObjectInputStream(new FileInputStream("src/main/resources/storage.dat"))) {
             storage = (Map<String, Integer>) ois.readObject();
         } catch (IOException | ClassNotFoundException e) {
-            throw new RuntimeException("cant load storage");
+            System.out.println("В банкомате пока нет денег");
+//            throw new RuntimeException("cant load storage");
         }
 //        System.out.println("В банкомате: " + storage.get("balance") + "RUB");
     }
@@ -29,7 +30,7 @@ public class ATMService {
     }
 
     private static void saveConsist() {
-        try (ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream("storage.dat"))) {
+        try (ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream("src/main/resources/storage.dat"))) {
             oos.writeObject(storage);
         } catch (IOException e) {
             throw new RuntimeException("cant save storage");

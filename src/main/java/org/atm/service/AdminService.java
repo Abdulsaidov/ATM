@@ -11,14 +11,14 @@ import java.util.List;
 public class AdminService {
 
     public static void updateCard(Card card){
-        try (ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream(card.getNumber() + ".dat"))){
+        try (ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream(new File("src/main/resources/" + card.getNumber() + ".dat")))){
             oos.writeObject(card);
         }catch(IOException e){
             throw new RuntimeException("can't update");
         }
     }
     public static void writeCard(String cardNumber) {
-        try (ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream(cardNumber + ".dat"));
+        try (ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream(new File("src/main/resources/" + cardNumber + ".dat")));
              BufferedReader br = new BufferedReader(new InputStreamReader(System.in))) {
 //            String number, Double balance, String currency
             List<Account> accountList = new ArrayList<>();
@@ -41,7 +41,7 @@ public class AdminService {
 
     public static Card readCard(String cardNumber) {
         Card card;
-        try (ObjectInputStream ois = new ObjectInputStream(new FileInputStream(cardNumber + ".dat"))) {
+        try (ObjectInputStream ois = new ObjectInputStream(new FileInputStream("src/main/resources/"+ cardNumber + ".dat"))) {
             card = (Card) ois.readObject();
         } catch (IOException | ClassNotFoundException e) {
             throw new RuntimeException(e);
