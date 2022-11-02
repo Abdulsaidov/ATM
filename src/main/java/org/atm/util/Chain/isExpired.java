@@ -1,4 +1,4 @@
-package org.atm.util;
+package org.atm.util.Chain;
 
 import org.atm.model.Card;
 

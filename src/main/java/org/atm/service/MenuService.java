@@ -1,5 +1,7 @@
 package org.atm.service;
 
+import org.atm.util.Strategy.Storage;
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -10,7 +12,7 @@ public class MenuService {
             "для продолжения работы нажмите: " + "\n" +
             "1 -> для админки" + "\n" +
             "2 -> чтобы воспользоваться банкоматом" + "\n" +
-            "0 -> для того чтоб завершить работу\n"+
+            "0 -> для того чтоб завершить работу\n" +
             "-----------------------------------------------";
 
     private static final String ADMIN = "для продолжения работы нажмите: " + "\n" +
@@ -23,7 +25,7 @@ public class MenuService {
             "-----------------------------------------------\n" +
             "1 -> чтобы узнать баланс" + "\n" +
             "2 -> чтобы снять деньги" + "\n" +
-            "0 -> для того чтоб вернуться в предыдущее меню\n"+
+            "0 -> для того чтоб вернуться в предыдущее меню\n" +
             "-----------------------------------------------";
 
     public static void welcomePage() {
@@ -38,7 +40,10 @@ public class MenuService {
                 } else if (choose.equals("2")) {
                     // users side
                     userPage(scanner);
-                } else {
+                } else if (choose.equals("0")) {
+                    System.out.println("Всего хорошего!");
+                }
+                else {
                     System.out.println("Главное меню Введите 1,2 или 0");
                 }
             }
@@ -57,17 +62,19 @@ public class MenuService {
                 String cardNumber = scanner.readLine();
                 AdminService.writeCard(cardNumber);
                 System.out.println("Карта успешно добавлена" + "\n" + "Нажмите 0 , чтобы продолжить");
+                welcomePage();
             } else if (admin.equals("2")) {
-                System.out.println("Введите количество 10 рублевых купюр");
-                int tens = Integer.parseInt(scanner.readLine());
-                System.out.println("Введите количество 20 рублевых купюр");
-                int twenty = Integer.parseInt(scanner.readLine());
-                System.out.println("Введите количество 50 рублевых купюр");
-                int fifty = Integer.parseInt(scanner.readLine());
-                System.out.println("Введите количество 100 рублевых купюр");
-                int hundred = Integer.parseInt(scanner.readLine());
-                ATMService.fillStorage(tens, twenty, fifty, hundred);
-                System.out.println("Деньги успешно добавлены в банкомат" + "\n" + "Нажмите 0 , чтобы продолжить");
+                //todo : выносить логику в метод
+                System.out.println("Введите валюту RUB,USD или EUR");
+                Storage strategy = ATMService.defineStorage(scanner.readLine());
+                if (strategy != null) {
+                    strategy.fillStorage(scanner, ATMService.getStorage());
+                    System.out.println("Деньги успешно добавлены в банкомат" + "\n" + "Нажмите 0 , чтобы продолжить");
+                    ATMService.saveConsist();
+                } else {
+                    System.out.println("Валюта введена некорректно");
+                    adminPage(scanner);
+                }
             } else if (admin.equals("0")) {
                 System.out.println();
             } else {
@@ -82,11 +89,11 @@ public class MenuService {
         for (int i = 0; i < 3; i++) {
             System.out.println("Введите pin code");
             pin = scanner.readLine();
-            if (i<2 && !ATMService.operationAvailable(pin)) {
+            if (i < 2 && !ATMService.operationAvailable(pin)) {
                 System.out.println("Вы ввели неверный pin " +
                         "\nещё попыток: " + (2 - i));
-            } else if (i==2 && !ATMService.operationAvailable(pin)) {
-                System.out.println("Вы ввели неверный pin и будете возвращены в главное меню"+"\n");
+            } else if (i == 2 && !ATMService.operationAvailable(pin)) {
+                System.out.println("Вы ввели неверный pin и будете возвращены в главное меню" + "\n");
                 welcomePage();
             } else {
                 break;
@@ -98,13 +105,51 @@ public class MenuService {
         while (!user.equals("0")) {
             user = scanner.readLine();
             if (user.equals("1")) {
-                ATMService.getBalance();
+                ATMService.showAccounts();
+                System.out.println("Введите необходимую цифру для выбора счета или 0, чтобы выйти");
+                int accountIndex = Integer.parseInt(scanner.readLine());
+                if (accountIndex == 0) {
+                    userPage(scanner);
+                }
+                ATMService.getBalance(accountIndex);
                 System.out.println("\n" + "Нажмите 0 , чтобы продолжить");
             } else if (user.equals("2")) {
-                System.out.println("Введите сумму, которую вы хотите снять");
-                double summa = Double.parseDouble(scanner.readLine());
-                ATMService.getMoney(summa);
-                System.out.println("\n" + "Нажмите 0 , чтобы продолжить");
+                System.out.println("Введите желаемую валюту: RUB, USD, EUR");
+                String currency = scanner.readLine();
+                Storage strategy = ATMService.defineStorage(currency);
+                if (strategy != null) {
+                    System.out.println("Введите сумму, которую вы хотите снять");
+                    double summa = Double.parseDouble(scanner.readLine());
+                    if (!strategy.getMoney(summa, ATMService.getStorage())) {
+                        System.out.println("На текущем счете недостаточно средств\n" +
+                                "желаете снять с другого?\n" +
+                                " конвертация будет осуществлена по текущему курсу ЦБ" + "\n" +
+                                "да/нет?");
+                        String answer = scanner.readLine();
+                        if (answer.equals("да")) {
+                            System.out.println("Желаете снять " + summa + " " + currency + " с другого счета?" + "\n");
+                            ATMService.showAccounts();
+                            System.out.println("Введите необходимую цифру для выбора счета или 0, чтобы выйти");
+                            int accountIndex = Integer.parseInt(scanner.readLine());
+                            if (accountIndex == 0) {
+                                userPage(scanner);
+                            }
+                            //todo здесь правильный обмен, но сумма выдается не с того стораджа
+                            strategy = ATMService.defineStorage(currency);
+                            strategy.getMoney(summa, ATMService.getStorage());
+                            CardService.updateBalance(strategy.exchange(currency, summa),ATMService.getCurrency(accountIndex));
+                        } else {
+                            System.out.println("Вы не выбрали да");
+                            userPage(scanner);
+                        }
+                    }
+                    strategy.getMoney(summa, ATMService.getStorage());
+                    CardService.updateBalance(summa,currency);
+                    System.out.println("\n" + "Нажмите 0 , чтобы продолжить");
+                } else {
+                    System.out.println("Валюта введена некорректно");
+                    userPage(scanner);
+                }
             } else if (user.equals("0")) {
                 System.out.println();
             } else {
