@@ -18,7 +18,7 @@ public interface Storage {
     boolean availableBanknotes(List<Integer> list, Map<String, Integer> storage);
 
     boolean getMoney(double summa, Map<String, Integer> storage);
-//    boolean reduceBalance(double summa, Map<String, Integer> storage);
+    boolean availableForGetMoney(double summa, Map<String, Integer> storage);
 
 
     Integer availableSum(Map<String, Integer> storage);
@@ -29,8 +29,7 @@ public interface Storage {
         double sum = summa;
         Card card = AdminService.readCard(ATMService.inspectCardNumber());
         List<Integer> withdrawList = new ArrayList<>(list.size());
-        if (sum <= storage.get("balance" + currency) &&
-                sum <= card.getAccount().get(ATMService.findAccount(currency)).getBalance()) {
+        if (sum <= storage.get("balance" + currency)) {
             for (int i = 0; i < list.size(); i++) {
                 if (sum != 0) {
                     withdrawList.add(Math.min((int) (sum / list.get(i)), storage.get("" + list.get(list.size()-i-1) + currency)));

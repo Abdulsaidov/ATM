@@ -30,24 +30,23 @@ public class MenuService {
             "-----------------------------------------------";
 
     public static void welcomePage() throws IOException {
-       BufferedReader scanner = new BufferedReader(new InputStreamReader(System.in));
-            System.out.println(WELCOME);
-            String choose = "";
-            while (!choose.equals("0")) {
-                choose = scanner.readLine();
-                if (choose.equals("1")) {
-                    // admins side
-                    adminPage(scanner);
-                } else if (choose.equals("2")) {
-                    // users side
-                    userPage(scanner);
-                } else if (choose.equals("0")) {
-                    System.out.println("Всего хорошего!");
-                }
-                else {
-                    System.out.println("Главное меню Введите 1,2 или 0");
-                }
+        BufferedReader scanner = new BufferedReader(new InputStreamReader(System.in));
+        System.out.println(WELCOME);
+        String choose = "";
+        while (!choose.equals("0")) {
+            choose = scanner.readLine();
+            if (choose.equals("1")) {
+                // admins side
+                adminPage(scanner);
+            } else if (choose.equals("2")) {
+                // users side
+                userPage(scanner);
+            } else if (choose.equals("0")) {
+                System.out.println("Всего хорошего!");
+            } else {
+                System.out.println("Главное меню Введите 1,2 или 0");
             }
+        }
     }
 
     private static void adminPage(BufferedReader scanner) throws IOException {
@@ -71,10 +70,9 @@ public class MenuService {
                     System.out.println("Валюта введена некорректно");
                     adminPage(scanner);
                 }
-            }else if (admin.equals("3")) {
+            } else if (admin.equals("3")) {
                 ATMService.availableSum();
-            }
-            else if (admin.equals("0")) {
+            } else if (admin.equals("0")) {
                 System.out.println();
             } else {
                 System.out.println("Admin : Введите 1,2 или 0");
@@ -115,18 +113,18 @@ public class MenuService {
             } else if (user.equals("2")) {
                 System.out.println("Введите желаемую валюту: RUB, USD, EUR");
                 String currency = scanner.readLine();
-                Storage strategy = ATMService.defineStorage(currency);
+                Storage strategy = ATMService.defineStorage(currency); // определили стратегию валютного стораджа
                 if (strategy != null) {
                     System.out.println("Введите сумму, которую вы хотите снять");
                     double summa = Double.parseDouble(scanner.readLine());
-                    if (!strategy.getMoney(summa, ATMService.getStorage())) {
+                    if (!strategy.availableForGetMoney(summa, ATMService.getStorage())) { // узнали что денег на соответствующем счете нет
                         System.out.println("На текущем счете недостаточно средств\n" +
                                 "желаете снять с другого?\n" +
                                 " конвертация будет осуществлена по текущему курсу ЦБ" + "\n" +
                                 "да/нет?");
                         String answer = scanner.readLine();
                         if (answer.equals("да")) {
-                            System.out.println("Желаете снять " + summa + " " + currency + " с другого счета?" + "\n");
+                            System.out.println("Желаете снять " + summa + " " + currency + " с другого счета?" + "\n"); // сумма и валюта оригинальные
                             ATMService.showAccounts();
                             System.out.println("Введите необходимую цифру для выбора счета или 0, чтобы выйти");
                             int accountIndex = Integer.parseInt(scanner.readLine());
@@ -134,15 +132,20 @@ public class MenuService {
                                 userPage(scanner);
                             }
                             //todo здесь правильный обмен, но сумма выдается не с того стораджа
-                            strategy = ATMService.defineStorage(currency);
-                            strategy.getMoney(summa, ATMService.getStorage());
-                            CardService.updateBalance(strategy.exchange(currency, summa),ATMService.getCurrency(accountIndex));
+                            Storage alternativeStrategy = ATMService.defineStorage(ATMService.getCurrency(accountIndex));
+                            if(alternativeStrategy != null
+                                    && alternativeStrategy.availableForGetMoney(alternativeStrategy.exchange(currency,summa),ATMService.getStorage())){
+
+                                strategy.getMoney(summa, ATMService.getStorage()); // снимает деньги со стораджа валюты
+                                CardService.updateBalance(alternativeStrategy.exchange(currency, summa), ATMService.getCurrency(accountIndex));
+                            }
+
                         } else {
                             System.out.println("Вы не выбрали да");
                             userPage(scanner);
                         }
                     }
-                    CardService.updateBalance(summa,currency);
+                    CardService.updateBalance(summa, currency);
                     System.out.println("\n" + "Нажмите 0 , чтобы продолжить");
                 } else {
                     System.out.println("Валюта введена некорректно");

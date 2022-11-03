@@ -52,16 +52,15 @@ public class StorageRUB implements Storage {
 
     @Override
     public boolean availableBanknotes(List<Integer> list, Map<String, Integer> storage) {
-        return storage.get("100RUB") - list.get(0) >= 0 && storage.get("200RUB") - list.get(1) >= 0
-                && storage.get("500RUB") - list.get(2) >= 0 && storage.get("1000RUB") - list.get(3) >= 0;
+        return storage.get("100RUB") - list.get(3) >= 0 && storage.get("200RUB") - list.get(2) >= 0
+                && storage.get("500RUB") - list.get(1) >= 0 && storage.get("1000RUB") - list.get(0) >= 0;
     }
 
     @Override
     public boolean getMoney(double summa, Map<String, Integer> storage) {
 
         Card card = AdminService.readCard(ATMService.inspectCardNumber());
-        if (summa <= storage.get("balanceRUB") &&
-                summa <= card.getAccount().get(ATMService.findAccount("RUB")).getBalance()) {
+        if (summa <= storage.get("balanceRUB")) {
             if (withdrawStorage(Storage.findBankNotes(summa, storage, "RUB", List.of(1000, 500, 200, 100)),
                     storage)) {
                 System.out.println("Возьмите деньги: " + summa + " RUB");
@@ -92,5 +91,10 @@ public class StorageRUB implements Storage {
             System.out.println("ввели некорректную валюту");
             return summa;
         }
+    }
+    @Override
+    public boolean availableForGetMoney(double summa, Map<String, Integer> storage) {
+        Card card = AdminService.readCard(ATMService.inspectCardNumber());
+        return summa <= card.getAccount().get(ATMService.findAccount("RUB")).getBalance();
     }
 }

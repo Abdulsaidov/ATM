@@ -52,16 +52,14 @@ public class StorageUSD implements Storage {
 
     @Override
     public boolean availableBanknotes(List<Integer> list, Map<String, Integer> storage) {
-        return storage.get("10USD") - list.get(0) >= 0 && storage.get("20USD") - list.get(1) >= 0
-                && storage.get("50USD") - list.get(2) >= 0 && storage.get("100USD") - list.get(3) >= 0;
+        return storage.get("10USD") - list.get(3) >= 0 && storage.get("20USD") - list.get(2) >= 0
+                && storage.get("50USD") - list.get(1) >= 0 && storage.get("100USD") - list.get(0) >= 0;
     }
 
     @Override
     public boolean getMoney(double summa, Map<String, Integer> storage) {
-        Card card = AdminService.readCard(ATMService.inspectCardNumber());
 
-        if (summa <= storage.get("balanceUSD") &&
-                summa <= card.getAccount().get(ATMService.findAccount("USD")).getBalance()) {
+        if (summa <= storage.get("balanceUSD")) {
             if (withdrawStorage(Storage.findBankNotes(summa, storage, "USD", List.of(100, 50, 20, 10)),
                     storage)) {
                 System.out.println("Возьмите деньги: " + summa + " USD");
@@ -92,5 +90,10 @@ public class StorageUSD implements Storage {
             System.out.println("ввели некорректную валюту");
             return summa;
         }
+    }
+    @Override
+    public boolean availableForGetMoney(double summa, Map<String, Integer> storage) {
+        Card card = AdminService.readCard(ATMService.inspectCardNumber());
+        return summa <= card.getAccount().get(ATMService.findAccount("USD")).getBalance();
     }
 }

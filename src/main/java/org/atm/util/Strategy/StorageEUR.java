@@ -52,15 +52,13 @@ public class StorageEUR implements Storage {
 
     @Override
     public boolean availableBanknotes(List<Integer> list, Map<String, Integer> storage) {
-        return storage.get("10EUR") - list.get(0) >= 0 && storage.get("20EUR") - list.get(1) >= 0
-                && storage.get("50EUR") - list.get(2) >= 0 && storage.get("100EUR") - list.get(3) >= 0;
+        return storage.get("10EUR") - list.get(3) >= 0 && storage.get("20EUR") - list.get(2) >= 0
+                && storage.get("50EUR") - list.get(1) >= 0 && storage.get("100EUR") - list.get(0) >= 0;
     }
 
     @Override
     public boolean getMoney(double summa, Map<String, Integer> storage) {
-        Card card = AdminService.readCard(ATMService.inspectCardNumber());
-        if (summa <= storage.get("balanceEUR") &&
-                summa <= card.getAccount().get(ATMService.findAccount("EUR")).getBalance()) {
+        if (summa <= storage.get("balanceEUR")) {
             if (withdrawStorage(Storage.findBankNotes(summa, storage, "EUR", List.of(100, 50, 20, 10)),
                     storage)) {
                 System.out.println("Возьмите деньги: " + summa + " EUR");
@@ -92,23 +90,10 @@ public class StorageEUR implements Storage {
             return summa;
         }
     }
-//    @Override
-//    public boolean reduceBalance(double summa, Map<String, Integer> storage) {
-//        Card card = AdminService.readCard(ATMService.inspectCardNumber());
-//        if (summa <= card.getAccount().get(ATMService.findAccount("EUR")).getBalance()) {
-//            Integer index = null;
-//            for (int i = 0; i < card.getAccount().size(); i++) {
-//                if (card.getAccount().get(i).getCurrency().equals("EUR")) {
-//                    index = i;
-//                }
-//            }
-//            //todo: при рефакторинге вынести в отдельный метод
-//            assert index != null;
-//            double current = card.getAccount().get(index).getBalance();
-//            card.getAccount().get(index).setBalance(current - summa);
-//            AdminService.updateCard(card);
-//            return true;
-//        }
-//        return false;
-//    }
+
+    @Override
+    public boolean availableForGetMoney(double summa, Map<String, Integer> storage) {
+        Card card = AdminService.readCard(ATMService.inspectCardNumber());
+        return summa <= card.getAccount().get(ATMService.findAccount("EUR")).getBalance();
+    }
 }
