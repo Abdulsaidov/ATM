@@ -60,7 +60,6 @@ public class ATMService {
         }
         return current;
     }
-    
 
     public static void getBalance(int i) {
         Card current = AdminService.readCard(inspectCardNumber());
@@ -96,11 +95,12 @@ public class ATMService {
             System.out.println(accountList.indexOf(a) + 1 + "-> " + a.getAccountNumber() + " " + a.getCurrency());
         }
     }
+
     public static int findAccount(String currency) {
         Card card = AdminService.readCard(inspectCardNumber());
         List<Account> accountList = card.getAccount();
         for (Account a : accountList) {
-            if (a.getCurrency().equals(currency)){
+            if (a.getCurrency().equals(currency)) {
                 return accountList.indexOf(a);
             }
         }

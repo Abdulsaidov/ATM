@@ -11,34 +11,30 @@ import java.util.List;
 public class AdminService {
 
     public static void updateCard(Card card) {
-        try (ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream(new File("src/main/resources/" + card.getNumber() + ".dat")))) {
+        try (ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream("src/main/resources/" + card.getNumber() + ".dat"))) {
             oos.writeObject(card);
         } catch (IOException e) {
             throw new RuntimeException("can't update");
         }
     }
 
-    public static void writeCard(String cardNumber) {
-        try (ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream(new File("src/main/resources/" + cardNumber + ".dat")));
-             BufferedReader br = new BufferedReader(new InputStreamReader(System.in))) {
+    public static void writeCard(String cardNumber) throws IOException {
+        ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream("src/main/resources/" + cardNumber + ".dat"));
+        BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
 //            String number, Double balance, String currency
-            List<Account> accountList = new ArrayList<>();
+        List<Account> accountList = new ArrayList<>();
+        accountList.add(createAccount(br));
+        System.out.println("Добавить еще счет? да/нет");
+        String more = br.readLine();
+        while (more.equals("да")) {
             accountList.add(createAccount(br));
-            String more = "";
             System.out.println("Добавить еще счет? да/нет");
             more = br.readLine();
-            while (more.equals("да")) {
-                accountList.add(createAccount(br));
-                System.out.println("Добавить еще счет? да/нет");
-                more = br.readLine();
-            }
-            System.out.println("Введите данные карты");
-            Card card = createCard(br);
-            card.setAccount(accountList);
-            oos.writeObject(card);
-        } catch (IOException e) {
-            throw new RuntimeException(e);
         }
+        System.out.println("Введите данные карты");
+        Card card = createCard(br);
+        card.setAccount(accountList);
+        oos.writeObject(card);
     }
 
     public static Card readCard(String cardNumber) {

@@ -28,8 +28,8 @@ public class MenuService {
             "0 -> для того чтоб вернуться в предыдущее меню\n" +
             "-----------------------------------------------";
 
-    public static void welcomePage() {
-        try (BufferedReader scanner = new BufferedReader(new InputStreamReader(System.in))) {
+    public static void welcomePage() throws IOException {
+       BufferedReader scanner = new BufferedReader(new InputStreamReader(System.in));
             System.out.println(WELCOME);
             String choose = "";
             while (!choose.equals("0")) {
@@ -47,9 +47,6 @@ public class MenuService {
                     System.out.println("Главное меню Введите 1,2 или 0");
                 }
             }
-        } catch (IOException e) {
-            throw new RuntimeException("Exception welcomePage");
-        }
     }
 
     private static void adminPage(BufferedReader scanner) throws IOException {
@@ -59,10 +56,8 @@ public class MenuService {
             admin = scanner.readLine();
             if (admin.equals("1")) {
                 System.out.println("Введите номер карты");
-                String cardNumber = scanner.readLine();
-                AdminService.writeCard(cardNumber);
+                AdminService.writeCard(scanner.readLine());
                 System.out.println("Карта успешно добавлена" + "\n" + "Нажмите 0 , чтобы продолжить");
-                welcomePage();
             } else if (admin.equals("2")) {
                 //todo : выносить логику в метод
                 System.out.println("Введите валюту RUB,USD или EUR");

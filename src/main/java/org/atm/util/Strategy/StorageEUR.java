@@ -73,7 +73,7 @@ public class StorageEUR implements Storage {
 //                double current = card.getAccount().get(index).getBalance();
 //                card.getAccount().get(index).setBalance(current - summa);
 //                AdminService.updateCard(card);
-//                System.out.println("Возьмите деньги:" + summa);
+                System.out.println("Возьмите деньги:" + summa);
                 return true;
             } else {
                 System.out.println("no money honey");
