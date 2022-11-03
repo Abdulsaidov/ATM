@@ -12,8 +12,5 @@ public class App {
         } catch (IOException e) {
             e.printStackTrace();
         }
-//        System.out.println(ATMService.getStorage().get("balanceRUB"));
-//        System.out.println(ATMService.getStorage().get("balanceEUR"));
-//        System.out.println(ATMService.getStorage().get("balanceUSD"));
     }
 }

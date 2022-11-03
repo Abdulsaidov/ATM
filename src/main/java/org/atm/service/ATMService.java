@@ -12,6 +12,7 @@ import org.atm.util.Strategy.StorageRUB;
 import org.atm.util.Strategy.StorageUSD;
 
 import java.io.*;
+import java.text.DecimalFormat;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -30,13 +31,13 @@ public class ATMService {
         } catch (IOException | ClassNotFoundException e) {
             System.out.println("В банкомате пока нет денег");
         }
-        System.out.println("В банкомате: " + storage.get("balanceRUB") + "RUB");
-        System.out.println("В банкомате: " + storage.get("balanceUSD") + "USD");
-        System.out.println("В банкомате: " + storage.get("balanceEUR") + "EUR");
     }
 
-    public static Integer availableSum() {
-        return storage.get("balance");
+    public static void availableSum() {
+        System.out.println(storage.get("balanceRUB") + " RUB");
+        System.out.println(storage.get("balanceUSD") + " USD");
+        System.out.println(storage.get("balanceEUR") + " EUR");
+        System.out.println("\n" + "Нажмите 0 , чтобы продолжить");
     }
 
     public static void saveConsist() {
@@ -63,8 +64,9 @@ public class ATMService {
 
     public static void getBalance(int i) {
         Card current = AdminService.readCard(inspectCardNumber());
+        String formattedBalance = new DecimalFormat("#0.00").format(current.getAccount().get(i - 1).getBalance());
         System.out.println("Здравствуйте, " + current.getHolder() + "\n" +
-                "ваш баланс: " + current.getAccount().get(i - 1).getBalance());
+                "ваш баланс: " + formattedBalance + " " + current.getAccount().get(i-1).getCurrency()) ;
     }
 
     public static String getCurrency(int i) {

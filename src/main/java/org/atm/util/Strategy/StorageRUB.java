@@ -64,18 +64,7 @@ public class StorageRUB implements Storage {
                 summa <= card.getAccount().get(ATMService.findAccount("RUB")).getBalance()) {
             if (withdrawStorage(Storage.findBankNotes(summa, storage, "RUB", List.of(1000, 500, 200, 100)),
                     storage)) {
-//                Integer index = null;
-//                for (int i = 0; i < card.getAccount().size(); i++) {
-//                    if (card.getAccount().get(i).getCurrency().equals("RUB")) {
-//                        index = i;
-//                    }
-//                }
-//                //todo: при рефакторинге вынести в отдельный метод
-//                assert index != null;
-//                double current = card.getAccount().get(index).getBalance();
-//                card.getAccount().get(index).setBalance(current - summa);
-//                AdminService.updateCard(card);
-//                System.out.println("Возьмите деньги:" + summa);
+                System.out.println("Возьмите деньги: " + summa + " RUB");
                 return true;
             } else {
                 System.out.println("no money honey");

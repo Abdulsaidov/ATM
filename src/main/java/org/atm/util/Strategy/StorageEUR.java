@@ -63,17 +63,7 @@ public class StorageEUR implements Storage {
                 summa <= card.getAccount().get(ATMService.findAccount("EUR")).getBalance()) {
             if (withdrawStorage(Storage.findBankNotes(summa, storage, "EUR", List.of(100, 50, 20, 10)),
                     storage)) {
-//                Integer index = null;
-//                for (int i = 0; i < card.getAccount().size(); i++) {
-//                    if (card.getAccount().get(i).getCurrency().equals("EUR")) {
-//                        index = i;
-//                    }
-//                }
-//                assert index != null;
-//                double current = card.getAccount().get(index).getBalance();
-//                card.getAccount().get(index).setBalance(current - summa);
-//                AdminService.updateCard(card);
-                System.out.println("Возьмите деньги:" + summa);
+                System.out.println("Возьмите деньги: " + summa + " EUR");
                 return true;
             } else {
                 System.out.println("no money honey");

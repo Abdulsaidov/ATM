@@ -64,7 +64,7 @@ public class StorageUSD implements Storage {
                 summa <= card.getAccount().get(ATMService.findAccount("USD")).getBalance()) {
             if (withdrawStorage(Storage.findBankNotes(summa, storage, "USD", List.of(100, 50, 20, 10)),
                     storage)) {
-
+                System.out.println("Возьмите деньги: " + summa + " USD");
                 return true;
             } else {
                 System.out.println("no money honey");

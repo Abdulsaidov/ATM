@@ -19,6 +19,7 @@ public class MenuService {
             "-----------------------------------------------\n" +
             "1 -> чтобы добавить новую карту" + "\n" +
             "2 -> чтобы внести деньги в банкомат" + "\n" +
+            "3 -> чтобы внести узнать доступные суммы" + "\n" +
             "0 -> для того чтоб вернуться в предыдущее меню\n" +
             "-----------------------------------------------";
     private static final String USER = "для продолжения работы нажмите: " + "\n" +
@@ -70,7 +71,10 @@ public class MenuService {
                     System.out.println("Валюта введена некорректно");
                     adminPage(scanner);
                 }
-            } else if (admin.equals("0")) {
+            }else if (admin.equals("3")) {
+                ATMService.availableSum();
+            }
+            else if (admin.equals("0")) {
                 System.out.println();
             } else {
                 System.out.println("Admin : Введите 1,2 или 0");
@@ -138,7 +142,6 @@ public class MenuService {
                             userPage(scanner);
                         }
                     }
-                    strategy.getMoney(summa, ATMService.getStorage());
                     CardService.updateBalance(summa,currency);
                     System.out.println("\n" + "Нажмите 0 , чтобы продолжить");
                 } else {
