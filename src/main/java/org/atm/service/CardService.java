@@ -28,4 +28,24 @@ public class CardService {
         account.setCurrency(currency);
         return account;
     }
+
+    public static boolean updateBalance(double summa, String currency){
+        Card card = AdminService.readCard(ATMService.inspectCardNumber());
+        Integer index = null;
+        for (int i = 0; i < card.getAccount().size(); i++) {
+            if (card.getAccount().get(i).getCurrency().equals(currency)) {
+                index = i;
+            }
+        }
+        assert index != null;
+        double current = card.getAccount().get(index).getBalance();
+        if(current<summa){
+            return false;
+        }
+        card.getAccount().get(index).setBalance(current - summa);
+        AdminService.updateCard(card);
+        return true;
+    }
+
+
 }
