@@ -144,9 +144,11 @@ public class MenuService {
                             System.out.println("Вы не выбрали да");
                             userPage(scanner);
                         }
+                    } else {
+                        strategy.getMoney(summa,ATMService.getStorage());
+                        CardService.updateBalance(summa, currency);
+                        System.out.println("\n" + "Нажмите 0 , чтобы продолжить");
                     }
-                    CardService.updateBalance(summa, currency);
-                    System.out.println("\n" + "Нажмите 0 , чтобы продолжить");
                 } else {
                     System.out.println("Валюта введена некорректно");
                     userPage(scanner);

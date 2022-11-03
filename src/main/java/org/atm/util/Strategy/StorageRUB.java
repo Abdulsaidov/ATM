@@ -58,8 +58,6 @@ public class StorageRUB implements Storage {
 
     @Override
     public boolean getMoney(double summa, Map<String, Integer> storage) {
-
-        Card card = AdminService.readCard(ATMService.inspectCardNumber());
         if (summa <= storage.get("balanceRUB")) {
             if (withdrawStorage(Storage.findBankNotes(summa, storage, "RUB", List.of(1000, 500, 200, 100)),
                     storage)) {
@@ -92,6 +90,7 @@ public class StorageRUB implements Storage {
             return summa;
         }
     }
+
     @Override
     public boolean availableForGetMoney(double summa, Map<String, Integer> storage) {
         Card card = AdminService.readCard(ATMService.inspectCardNumber());
